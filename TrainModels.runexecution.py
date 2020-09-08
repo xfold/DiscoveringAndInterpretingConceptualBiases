@@ -1,11 +1,18 @@
 import TrainModels
 
+
+#
+# Training Configuration
+# 
+# add here the different training configs to train different models
+# (note this is a toy training example to test the training process, the parameters used are different from those used in the paper!)
 trainingSetup = [
-    #different dimensions
-    {'csvfile': "../Datasets/toy_1000_trp.csv", 'outputFile': '../Models/toy_w4_f10_e100_d100', 'w':4, 'minf': 10, 'epochs':100 ,'ndim':100}  
+    {'csvfile': "Datasets/toy_1000_trp.csv", 'outputFile': 'EmbeddingModels/toy_w4_f10_e100_d100', 'w':4, 'minf': 10, 'epochs':100 ,'ndim':100}  
 ]
 
-
+#
+# Run the training process
+#
 for setup in trainingSetup:
     print('Print setup ', setup)
     TrainModels.TrainModel(setup['csvfile'], 
