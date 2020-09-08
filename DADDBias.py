@@ -18,7 +18,7 @@ from datetime import datetime
 
 
 from importlib import reload
-import USAS_utils
+from Misc import USAS_utils
 reload(USAS_utils)
 
 '''
@@ -595,7 +595,21 @@ class DADDBias:
                     tor.append(k)
         return tor                
             
-
+    def UpdateClusterDict(self):
+        '''
+        this functions adds an element in the cluster list to assign a usas label to each cluster
+        '''
+        if(not self.performed_cluster or not self.performed_bias or not self.performed_USAS):
+            raise Exception("you first need to perform the USAS labelling to get the USAS labels")
+        for k in self.clusters1_dict:
+            usasl = self.usasDict1[k]
+            self.clusters1_dict[k]['USAS_label'] = usasl
+            
+        for k in self.clusters2_dict:
+            usasl = self.usasDict2[k]
+            self.clusters2_dict[k]['USAS_label'] = usasl
+      
+            
     def GetClusterThatContainsWord(self, word):
         '''
         searches for word word in the set of clusters created

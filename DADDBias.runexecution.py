@@ -14,11 +14,11 @@ christian = ["baptism", "messiah", "catholicism", "resurrection", "christianity"
 # Configurations.
 #
 # add other configs here to train various models
-# (note this is a toy training example to test the training process, the parameters used might be different from those used in the paper!)
+# (note this is a toy training example to test the training process, the parameters used here are different from those used in the paper!)
 #
 allconfigs = [
     {'modelfile': 'EmbeddingModels/toy_w4_f10_e100_d100',  'output': 'DADDBiasModels/', 'name': 'toy_w4_f10_e100_d100',
-     'stdev':4, 't1': female, 't2': male, 'repeatk':100, 'mink':10, 'maxk':150  }
+     'stdev':4, 't1': female, 't2': male, 'repeatk':30, 'mink':10, 'maxk':30  }
 ]
 
 #
