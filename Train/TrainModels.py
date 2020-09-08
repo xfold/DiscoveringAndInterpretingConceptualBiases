@@ -12,7 +12,7 @@ from nltk.stem import WordNetLemmatizer
 wordnet_lemmatizer = WordNetLemmatizer()
 
 
-def TrainModel(csv_document, csv_comment_column='body', outputname='outputModel', window = 4, minf=10, epochs=100, ndim=200, lemmatiseFirst = False):
+def TrainModel(csv_document, csv_comment_column='body', outputname='outputModel', window = 4, minf=10, epochs=100, ndim=200, lemmatiseFirst = False, encoding = "utf-8"):
     '''
     Load the documents from document_l, a list of sentences, and train a WE model with specified
     minf, epochs and ndims. where:
@@ -24,9 +24,8 @@ def TrainModel(csv_document, csv_comment_column='body', outputname='outputModel'
     path of the trained models
     '''
     
-    def loadCSVAndPreprocess(path, column = 'body', nrowss=None):
-        trpCom = pd.read_csv(path, lineterminator='\n', nrows=nrowss)
-
+    def loadCSVAndPreprocess(path, column = 'body', nrowss=None, encoding="utf-8"):
+        trpCom = pd.read_csv(path, lineterminator='\n', nrows=nrowss, encoding = encoding)
         '''
          read the tokenized reviews into a list
          each review item becomes a series of words
@@ -48,7 +47,8 @@ def TrainModel(csv_document, csv_comment_column='body', outputname='outputModel'
                     pp = [wordnet_lemmatizer.lemmatize(w, pos="n") for w in pp]
                 documents.append(pp)
             except:
-                print('\terror with row {}'.format(row))
+                pass
+                #print('\terror with row {}'.format(row))
 
 
         logging.info ("Done reading and preprocessing data file {} ".format(path))
@@ -85,7 +85,7 @@ def TrainModel(csv_document, csv_comment_column='body', outputname='outputModel'
     print('->Starting with {} [{}], output {}, window {}, minf {}, epochs {}, ndim {}'.format(csv_document, 
                                                                                        csv_comment_column,
                                                                                        outputname, window, minf, epochs, ndim))
-    docs = loadCSVAndPreprocess(csv_document, csv_comment_column, None)
+    docs = loadCSVAndPreprocess(csv_document, csv_comment_column, None, encoding)
     starttime = time.time()
     ofile = outputname
     print('-> Output will be saved in {}'.format(ofile))
