@@ -13,7 +13,7 @@ christian = ["baptism", "messiah", "catholicism", "resurrection", "christianity"
 #
 # Configurations.
 #
-# add other configs here to train various models
+# add other configs here to train different models
 # (note this is a toy training example to test the training process, the parameters used here are different from those used in the paper!)
 #
 allconfigs = [
@@ -34,4 +34,4 @@ for config in allconfigs:
     print('>>usas labels')
     obj.USASLabels()
     path = obj.Save()
-    print(">Config saved in ",path)
+    print(">DADDObject saved in ",path)

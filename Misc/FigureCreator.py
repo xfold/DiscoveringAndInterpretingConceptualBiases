@@ -29,7 +29,7 @@ def CreateLinearPlot(clusters1, clusters2, titles, t1name, t2name, yaxislabel=No
     #'USAS_label':USASLABEL})
     
     if(len(titles) != len(clusters1)):
-        raise Exception("If you want to perform more than one ranking type, you should include more than one ranking order in c1 and c2")
+        raise Exception("If you want to perform more than one ranking type, you should include more than one ranking order")
     
     fig, ax = plt.subplots(nrows=nrows, ncols=ncols)
     fig.tight_layout()
@@ -238,9 +238,8 @@ def GeneratePie(clusterplususas1, clusterplususas2, percentthreshold = 0, labelc
 def _rankUSASLabels_modif(cluster_dict):
         '''
         This method does exactly the same as DADDBias _rankUSASLabels method but ignores these unmatched labels that belong
-        to lcusters with other USAS labels with the same frequency. 
-        If a cluster is tagged with USAS = ['unmatched', 'power'], then it has a proper label (Power) and hence the cluster does
-        not count as a cluster without label.
+        to clusters with other USAS labels with the same frequency. 
+        If a cluster is tagged with USAS = ['unmatched', 'power'], then we consider label (Power) as the cluster label.
         '''
         #Unmatched is never considered as a label if there are other labels as frequent as unmatched in the cluster
         labeldict = {}
@@ -265,6 +264,7 @@ def _rankUSASLabels_modif(cluster_dict):
         return tor
 
 def _rep(name):
+    #shorten names to display
     toreplace = ['Similar/different', 'and the supernatural', 'and physical properties', 'and writing', 'and personal belongings', 'and Friendliness', 'and related activities', '-', ':-', '(pretty etc.)', ':']
     for r in toreplace:
         if(r in name):
@@ -277,89 +277,6 @@ def _rep(name):
 '''
 HEATMAP
 '''
-def GenerateHeatmapSS(usasLabelsRanking1L, usasLabelsRanking2L, names1L, names2L, percentthreshold = 0,savefilename = None):
-    '''
-    usasLabelsRanking1L : List of usasLabelsRankings from DADDBias for targetset1
-    usasLabelsRanking2L : List of usasLabelsRankings from DADDBias for targetset2
-    names1L list<str> : List of labels for rankings1
-    names2L list<str> : List of labels for rankings2
-    percentthreshold <int> : ignore labels with lower frequency than the percent threshold wrt the total aggregated label freq
-    '''
-    usasl1 = []
-    usasl2 = []
-    #first filter out all these labels non interesting (under freq% threhold), for all sets of labels
-    for index in range(0, len(usasLabelsRanking1L)):
-        totalC1 = sum( [x[1] for x in usasLabelsRanking1L[index] ] )
-        pc1 = math.ceil(percentthreshold/100 * totalC1)
-        usasl1.append( [x  for [x,y] in usasLabelsRanking1L[index] if y > pc1 and y > 1])
-        totalC2 = sum( [x[1] for x in usasLabelsRanking2L[index] ] )
-        pc2 = math.ceil(percentthreshold/100 * totalC2)
-        usasl2.append( [x  for [x,y] in usasLabelsRanking2L[index] if y > pc2 and y > 1])
-        print('set of labels above thr ({},{}) : ({}, {})'.format(pc1, pc2, len(usasl1[index]), len(usasl2[index])))
-    
-    usas = usasl1+usasl2
-    labels =  ['']+names1L+names2L
-    iM = _getInteresectinMatrix(usas)
-    
-    #print the matrix
-    #fig = plt.figure(figsize=(7,7))
-    
-    fig, ax = plt.subplots(figsize=(10,10))
-        
-    mask = np.zeros((len(usas), len(usas)), dtype=np.bool)
-    mask[np.triu_indices_from(mask)] = True
-
-    # Want diagonal elements as well
-    mask[np.diag_indices_from(mask)] = False
-    
-  
-    # Generate a custom diverging colormap
-    #cmap = sns.diverging_palette(220, 10, as_cmap=True)
-
-    # Draw the heatmap with the mask and correct aspect ratio
-    sns_plot = sns.heatmap(iM, ax=ax, mask=mask, cmap= 'viridis', vmin=0, vmax=1, center=0.5,
-            square=True, linewidths=.1, cbar = False)#, xticklabels=labels, yticklabels=labels)
-    # save to file
-    fig = sns_plot.get_figure()
-    # Set up the matplotlib figure
-    #f, ax = plt.subplots(figsize=(10, 10))
-
-    #fig.savefig(output)
-    #fig.show()
-    #ax = fig.add_subplot()
-    
-    
-    #iM = np.triu(iM, k=1)
-
-    # Plot the heatmap
-    #ax = sns.heatmap(iM)
-    
-    #cax = ax.matshow(iM, interpolation='nearest')
-    ax.set_xticklabels([])
-    ax.set_yticklabels(['\t'+label for label in labels])
-    ax.set_xticklabels(['\t'+label for label in labels])
-    for tic in ax.xaxis.get_major_ticks():
-        tic.tick1On = True
-        tic.tick2On = False
-        tic.label1On = True
-        tic.label2On = False
-    #Write the avg intersec between usas labels categories
-    for i in range(len(iM)):        
-        for j in range(i,len(iM)):
-            c = iM[j,i]
-            ax.text(i+0.1, j+0.3, "{0:.2f}".format(c), va='top', ha='left')
-
-    ax.xaxis.set_major_locator(ticker.MultipleLocator(1))
-    ax.yaxis.set_major_locator(ticker.MultipleLocator(1))
-    
-    if(savefilename is not None):
-        print('figure was saved as ', savefilename)
-        plt.savefig(savefilename, dpi = 200)
-        
-    plt.show()
-    
-    
-
 def GenerateHeatmap(usasLabelsRanking1L, usasLabelsRanking2L, names1L, names2L, size = None, percentthreshold = 0,savefilename = None):
     '''
     usasLabelsRanking1L : List of usasLabelsRankings from DADDBias for targetset1
@@ -431,95 +348,4 @@ def _getInteresectinMatrix(listLabels):
 def _intersec(list1, list2):
     intersection = len(list(set(list1).intersection(list2)))
     return float(intersection) / min(len(list1),len(list2))
-
-def _intersec2(list1, list2):
-    intersection = len(list(set(list1).intersection(list2)))
-    return float(intersection) / len(list1)
-
-def _jaccard_similarity(list1, list2):
-    intersection = len(list(set(list1).intersection(list2)))
-    union = (len(list1) + len(list2)) - intersection
-    return float(intersection / union)
-    
-def GenerateDoubleHeatmap(usasLabelsRanking1L, usasLabelsRanking2L, names1L, names2L, percentthreshold = 0, percentthreshold2 = 0, savefilename = None, ignoreUnmatched = False):
-    '''
-    usasLabelsRanking1L : List of usasLabelsRankings from DADDBias for targetset1
-    usasLabelsRanking2L : List of usasLabelsRankings from DADDBias for targetset2
-    names1L list<str> : List of labels for rankings1
-    names2L list<str> : List of labels for rankings2
-    percentthreshold <int> : ignore labels with lower frequency than the percent threshold wrt the total aggregated label freq
-    '''
-    usasl1 = []
-    usasl2 = []
-    usasl1b = []
-    usasl2b = []
-    #first filter out all these labels non interesting (under freq% threhold), for all sets of labels
-    for index in range(0, len(usasLabelsRanking1L)):
-        totalC1 = sum( [x[1] for x in usasLabelsRanking1L[index] ] )
-        pc1 = math.ceil(percentthreshold/100 * totalC1)
-        usasl1.append( [x  for [x,y] in usasLabelsRanking1L[index] if y > pc1 and y > 1])
-        totalC2 = sum( [x[1] for x in usasLabelsRanking2L[index] ] )
-        pc2 = math.ceil(percentthreshold/100 * totalC2)
-        usasl2.append( [x  for [x,y] in usasLabelsRanking2L[index] if y > pc2 and y > 1])
-        print('set of labels above thr top ({},{}) : ({}, {})'.format(pc1, pc2, len(usasl1[index]), len(usasl2[index])))
-        
-        pc1b = math.ceil(percentthreshold2/100 * totalC1)
-        usasl1b.append( [x  for [x,y] in usasLabelsRanking1L[index] if y > pc1b and y > 1])
-        pc2b = math.ceil(percentthreshold2/100 * totalC2)
-        usasl2b.append( [x  for [x,y] in usasLabelsRanking2L[index] if y > pc2b and y > 1])
-        print('set of labels above thr bottom ({},{}) : ({}, {})'.format(pc1b, pc2b, len(usasl1b[index]), len(usasl2b[index])))
-    
-    #THIS IS NOT WORKING
-    if(ignoreUnmatched is not None and ignoreUnmatched == True):
-        for index in range(0, len(usasl1)):
-            ind = usasl1[index].index('Unmatched')
-            if(ind>=0):
-                del usasl1[ind]
-            ind = usasl2[index].index('Unmatched')
-            if(ind>=0):
-                del usasl2[ind]
-            ind = usasl1b[index].index('Unmatched')
-            if(ind>=0):
-                del usasl1b[ind]
-            ind = usasl2b[index].index('Unmatched')
-            if(ind>=0):
-                del usasl2b[ind]
-    
-    usas = usasl1+usasl2
-    usasb = usasl1b+usasl2b
-    labels = names1L+names2L
-    iM = _getInteresectinMatrix(usas)
-    iM2 = _getInteresectinMatrix(usasb)
-    for i in range(len(iM)):
-        for j in range(i+1,len(iM)):
-            iM[j][i] = iM2[j][i] #add the top3 analysis to the bottom-left part of the matrix
-    
-    #print the matrix
-    fig = plt.figure(figsize=(7,7))
-    ax = fig.add_subplot(111)
-    cax = ax.matshow(iM, interpolation='nearest')
-    #ax.set_xticklabels([])
-    ax.set_yticklabels([''] + labels)
-    ax.set_xticklabels([''] + labels)
-    for tic in ax.xaxis.get_major_ticks():
-        tic.tick1On = False
-        tic.tick2On = True
-        tic.label1On = False
-        tic.label2On = True
-    #Write the avg intersec between usas labels categories
-    for i in range(len(iM)):        
-        for j in range(len(iM)):
-            c = iM[j,i]
-            ax.text(i, j, "{0:.2f}".format(c), va='center', ha='center')
-
-    ax.xaxis.set_major_locator(ticker.MultipleLocator(1))
-    ax.yaxis.set_major_locator(ticker.MultipleLocator(1))
-    
-    if(savefilename is not None):
-        print('figure was saved as ', savefilename)
-        plt.savefig(savefilename, dpi = 200)
-        
-    plt.show()
-    
-    
     

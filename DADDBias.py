@@ -86,7 +86,7 @@ class DADDBias:
                                                                  self.performed_cluster,
                                                                  self.performed_USAS)
             
-        #save self, excluding the embedding model
+        #save self, excluding the embedding model to reduce size
         del self.model
         del self.sid
         js = json.dumps(self.__dict__)
@@ -152,11 +152,6 @@ class DADDBias:
         val -= minF
         val = val/(maxF-minF)
         return val
-    
-    def _getBias(self, wordlist):
-        '''
-        This function calculates the bias of all words in the wordlist
-        '''
         
     def _getCosineDistance(self, wv1, wv2):
         return spatial.distance.cosine(wv1, wv2)
@@ -366,83 +361,7 @@ class DADDBias:
         self.performed_cluster = True
         return [self.clusters1, self.clusters2]
     
-    def Clustering2(self, repeateachclustering = 100, kclusters=[100,100], force = False):
-        '''
-        This function clusters similar words in concepts. It selects the best partition by means of silhouette cluster value, 
-        or by forcing specific k-values for the k-means clustering.
-        Before running this function, the set of most biased words need to be sleected by calling CalculateBiasedWords.
         
-        repeateachclustering int : Number of times we want to repeat the partitoins for each k to find the best silhouette posisble
-        forcekmin int : minimum k for kmeans to start exploring 
-        forcekmax int : maximum k for kmeans to end exploring
-        '''
-        if(self.performed_bias is None or self.performed_bias == False):
-            raise Exception("You first need to run CalculateBiasedWords before clustering.")
-        if(self.b1_dict is None or len(self.b1_dict) == 0 or self.b2_dict is None or len(self.b2_dict) == 0):
-            raise Exception("You first need to run CalculateBiasedWords before clustering.")
-        if(repeateachclustering is None or repeateachclustering < 0):
-            raise Exception("The repeateachclustering needs to be set, and needs to be a positive integer.")
-       
-        if(self.performed_cluster and not force):
-            raise Exception("The clustering has already been performed in this model. To repeat it, set force parameter to true")
-        
-        
-        self.krepetitions = repeateachclustering
-        
-        #prepare list of words and wv for both targetsets
-        l1 = ([],[])
-        for item in self.b1_dict.values():
-            l1[0].append( item['word'] )
-            l1[1].append( item['wv'] )
-        l2 = ([],[])
-        for item in self.b2_dict.values():
-            l2[0].append( item['word'] )
-            l2[1].append( item['wv'] )
-        ll = (l1,l2)    
-        
-        for ts, l in enumerate(ll):
-            words = l[0]
-            wv = l[1]
-            maxscore = [-1, None, None]
-            self.kstart = kclusters[ts]
-            self.kend = kclusters[ts]+1
-            for k in range(self.kstart, self.kend): 
-                for repeat in range(0, self.krepetitions):  
-                    clusterer = KMeans (n_clusters=k)
-                    preds = clusterer.fit_predict(wv)
-                    centers = clusterer.cluster_centers_
-                    score = silhouette_score (wv, preds, metric='euclidean')
-                    if(score>maxscore[0]):
-                        maxscore[0] = score
-                        maxscore[1] = preds
-                        maxscore[2] = centers
-                print('Exploring ',k, ' clusters... last silhouette score: ', score)        
-            #we map the words to each cluster for the paritition with max silhouette score
-            clusters = []
-            for i in range(0,len(maxscore[2])):
-                cl = []
-                indexes = np.where(maxscore[1] == i)[0]
-                for idx in indexes:
-                    cl.append(words[idx])
-                clusters.append(cl)
-                
-            #save the clusters
-            if(ts == 0):
-                self.clusters1 = clusters
-                self.cluster1_silhouette = maxscore[0]
-            else:
-                self.clusters2 = clusters
-                self.cluster2_silhouette = maxscore[0]
-        
-        
-        #create cluster dictioanries
-        self.clusters1_dict = self._createClusterDict(self.clusters1, self.b1_dict)
-        self.clusters2_dict = self._createClusterDict(self.clusters2, self.b2_dict)
-            
-        self.performed_cluster = True
-        return [self.clusters1, self.clusters2]
-    
-    
     def _createClusterDict(self, clusters, wdict):
         '''
         clusters <list<str>> : list of words in each cluster
@@ -597,7 +516,7 @@ class DADDBias:
             
     def UpdateClusterDict(self):
         '''
-        this functions adds an element in the cluster list to assign a usas label to each cluster
+        This functions adds an element in the cluster list to assign a usas label to each cluster
         '''
         if(not self.performed_cluster or not self.performed_bias or not self.performed_USAS):
             raise Exception("you first need to perform the USAS labelling to get the USAS labels")

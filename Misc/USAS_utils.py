@@ -148,10 +148,10 @@ def _get_USAS_categories_online2(text, url='http://ucrel-api.lancaster.ac.uk/cgi
     #print('HEY TAHTS IT')
     return getUSASOnline(text, url, d)
 
+
 '''
 USAS code for caggregating categoreis
 '''
-
 def UpdateCount_USAS(key, v, dic):
     if key in dic:
         dic[key].append(v)
