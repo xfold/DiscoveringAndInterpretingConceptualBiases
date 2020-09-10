@@ -13,7 +13,7 @@ This repository contains the next files and folders:
   <li><b>Source/Misc</b>: Folder containing helper functions related with the submission.</li>
   <li><b>Run.example.train.py</b>: Training example which used the toy dataset provided in this repository to train an embeddings model. </li>
   <li><b>Run.example.bias.py</b>: Apply our method to discover the biases of the toy example model trained with `Run.example.train.py`. </li>
-  <li><b>Run.example.full.ipynb</b>: Python notebook full example utilising the toy example which includes: (i) training an embedding model, (ii) discovering biases and clustering, and (iii) exploration of the biases of the model.</li>
+  <li><b>Run.example.full.ipynb</b>: Python notebook walkthrough exemplifying the whole bias discovery process. This includes: (i) training an embedding model, (ii) discovering biases and clustering, (iii) semantic label tagging, and (iv) exploration of the biases of the model using the toy dataset provided in this project.</li>
   <li><b>requirements.txt</b>: Requirements file.</li>
   <li><b>README.md</b>: This file.</li>    
 </ul>
