@@ -42,7 +42,7 @@ Once the datasets are downloaded, you can train the same models used in the pape
 ## Bias models
 Since training of the embedding models and the discovering of biases is a slow process, we are also providing the results of executing our methodology on the original datasets in a json format. The Bias models can be loaded using the `DADDBias.py` class, and contain all information related to the bias discovery, clustering and semantic tagging of the biases of a community. The Bias models can also be used to generate the Figures presented in the paper, as shown in the jupyter notebook included in the folder `PaperExperiments/`.
 
-Bias models can be found in folder `Models/` and can be loaded using `.Load()` function. For instance, to load the Bias model for r/TheRedPill we used in the paper, we would do:
+Bias models can be found in folder `Models/` and can be loaded using `DADDBias.Load()` function. For instance, to load the Bias model for r/TheRedPill we used in the paper, we need to:
 ```python
 import DADDBias
 
