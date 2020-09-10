@@ -78,6 +78,6 @@ for k in test.clusters2:
 ```
 
 ## Reproducibility
-By providing the original Datasets, the source code to train your models and the resulting Bias models of the executions used in the paper, we want to make sure the results are easily reproducible. we are also including a jupyter notebook in folder `PaperExperiments/` which shows how we generated all paper figures, and that is ready to run by anyone with jupyter notebook installed on their computer. 
+By providing the original Datasets, the source code to train your models and the resulting Bias models of the executions used in the paper, we want to make sure the results are easily reproducible. we are also including a jupyter notebook in folder `PaperExperiments/` which shows how we generated all paper figures, and that is ready to run by anyone with a jupyter notebook installed on their computer. 
 
 
