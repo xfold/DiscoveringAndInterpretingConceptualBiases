@@ -53,18 +53,18 @@ test.Load(savedfile)
 
 Once a model is loaded, we can access all information regarding that execution (see `Source/DADDBias.py` object). Some of the most relevant are:
 ```python
-  #biased and most salient words
-  b1_dict             #dictionary of biased words towards target set 1
-  b2_dict             #dictionary of biased words towards target set 2
-  #conceptual biases
-  clusters1_dict      #cluster dicitonary for ts1
-  clusters2_dict      #cluster dicitonary for ts2
-  #semantic categorisation of conceptual biases 
-  usasLabelsRanking1  #agrgegation of USAS labels at a partition lebel for ts1
-  usasLabelsRanking2  #agrgegation of USAS labels at a partition lebel for ts1
+#biased and most salient words
+b1_dict             #dictionary of biased words towards target set 1
+b2_dict             #dictionary of biased words towards target set 2
+#conceptual biases
+clusters1_dict      #cluster dicitonary for ts1
+clusters2_dict      #cluster dicitonary for ts2
+#semantic categorisation of conceptual biases 
+usasLabelsRanking1  #agrgegation of USAS labels at a partition lebel for ts1
+usasLabelsRanking2  #agrgegation of USAS labels at a partition lebel for ts1
 ```
 
-Therefore, once a model is loaded, the variable `b1_dict` will contain the set of most salient words selected biased towards attribute concept 1. For example, with next code we are listing all selected salient words biased towards attribute concept 1 (`women` in this model):
+Therefore, once a bias model is loaded, the variable `b1_dict` will contain the set of most salient words selected biased towards attribute concept 1. For example, with next code we are listing all selected salient words biased towards attribute concept 1 (`women` in this model):
 ```python
 print('Total select words biased towards women:', len(test.b1_dict))
 for k,v in list(test.b1_dict.items()):
