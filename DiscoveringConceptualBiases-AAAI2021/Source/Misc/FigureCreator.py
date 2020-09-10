@@ -1,32 +1,43 @@
-from importlib import reload
+'''
+******************************************************************************************************************
+NOTE: Although the code has been cleaned and commented, it is far from a final version. Many structures and procedures could be improved. 
+We are still working on it, but hopefully this serves as a beta version to demo the approach presented in the paper.
+******************************************************************************************************************
+'''
+
 import numpy as np
-import matplotlib.pyplot as plt
 import math
-from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,
-                               AutoMinorLocator)
+import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+from matplotlib.ticker import MultipleLocator
 import itertools
-import seaborn as sns
 import inflect
-from matplotlib import cm
 from nltk.stem import PorterStemmer 
-from nltk.tokenize import word_tokenize 
-from nltk.stem.snowball import SnowballStemmer
-stemmer = SnowballStemmer("english")
 
     
 '''
-CLUSTER FIGURE LINEAR PLOT
+This file contains a set of functions to create the figures shown in the paper based on the reuslts obtained by the approach.
+The three main functions are:
+ - CreateLinearPlot : Function to generate the detailed rankings of conceptual biases shown in the paper
+ - GeneratePie : Function to generate the pies that show the conceptual biases of the community
+ - GenerateHeatmap : function to generate the heatmaps shown in the paper
 '''
-def CreateLinearPlot(clusters1, clusters2, titles, t1name, t2name, yaxislabel=None, savefilename = None, filterplurals = None, dontinclude = None, nrows=2, ncols=2, figuresize=None):
+def CreateLinearPlot(clusters1, clusters2, titles, t1name, t2name, yaxislabel=None, savefilename = None, filterplurals = None, nrows=2, ncols=2, figuresize=None):
     '''
-    clusters1 <list <list<clusters from DADDBias.py> > : ordered cluster1 lists to display
-    clusters2 <list <list<clusters from DADDBias.py> > : ordered cluster2 lists to display
+    Creates a linear plot showing the detailed rankings of clusters presented in the paper. 
+
+    clusters1 <list <list<clusters from DADDBias.py> > : ordered cluster1 lists to display. 
+    clusters2 <list <list<clusters from DADDBias.py> > : ordered cluster2 lists to display. 
     titles <list<str>> : List of experiments to include in the figure, len(titles) == len(clusters1) == len(clusters2) 
+    t1name <str> : name for the tagret set1 y-axis, will be combined with `t2name`
+    t2name <str> : name for the tagret set2 y-axis, will be combined with `t1name`
+    yaxislabel <str> : full y axis name. Leave as None if you want to use `t1name` and `t2name`. (remove)
+    savefilename <str> : Path to save the resulting figure
+    filterplurals <bool> : set to True to ignore clusters formed by plurals already shown before. This is helpful to save space to generate smaller and more informative figures .
+    nrows <int> : Number of rows of the resulting image - useful if we want to leave more space between clusters, by i.e. setting 4 rows and 1 column. Nrows*ncols should be equal to len(clusters1) and to len(clusters2)
+    ncols <int> : Number of cols of the resulting image. Nrows*ncols should be equal to len(clusters1) and to len(clusters2) 
+    figuresize (<int>, <int>) : force figure size
     '''
-    #clusters from DADDBias are like this
-    #(words, {'biasW_avg': data[0], 'freq':data[1], 'sent_avg': data[2], 'sal_avg':data[3], 'rankW_avg':data[4], 'centroid':data[5], 
-    #'USAS_label':USASLABEL})
     
     if(len(titles) != len(clusters1)):
         raise Exception("If you want to perform more than one ranking type, you should include more than one ranking order")
@@ -39,7 +50,7 @@ def CreateLinearPlot(clusters1, clusters2, titles, t1name, t2name, yaxislabel=No
     maxfreq = _getMaxFreq(clusters1)
     maxfreq2 = _getMaxFreq(clusters2)
     maxfreq = max(maxfreq, maxfreq2)
-    #resize the freqs to the max and min
+    #resize the freqs to the max and min to beautify the results based on freqs
     maxclusterSize = 7000
     minclusterSize = 150
     index = 0
@@ -58,9 +69,6 @@ def CreateLinearPlot(clusters1, clusters2, titles, t1name, t2name, yaxislabel=No
             if(filterplurals is None or filterplurals == False):
                 words1 = np.array([ ['\n'.join(c[0])] for c in c1])
                 words2 = np.array([ ['\n'.join(c[0])] for c in c2])
-            elif(dontinclude is not None and len(dontinclude)>0):
-                words1 = np.array([ ['\n'.join(c)] for c in _selectWords(c1, dontinclude)]) 
-                words2 = np.array([ ['\n'.join(c)] for c in _selectWords(c2, dontinclude)]) 
             else:
                 words1 = np.array([ ['\n'.join(c)] for c in _selectWords(c1)]) 
                 words2 = np.array([ ['\n'.join(c)] for c in _selectWords(c2)]) 
@@ -75,9 +83,9 @@ def CreateLinearPlot(clusters1, clusters2, titles, t1name, t2name, yaxislabel=No
             freq2 = [f if f<maxclusterSize else maxclusterSize for f in freq2]
             freq1 = [f if f>minclusterSize else minclusterSize for f in freq1]
             freq2 = [f if f>minclusterSize else minclusterSize for f in freq2]
-            print(freq1)
             title = titles[index]
             
+            #plot and misc
             col.scatter(range(0,len(c1)), sal1,   s=freq1, c = sents1, cmap = 'RdYlGn', vmin=-1, vmax=1)
             col.scatter(range(0,len(c2)), sal2*-1,s=freq2, c = sents2, cmap = 'RdYlGn', vmin=-1, vmax=1)
             col.spines['bottom'].set_position('center')
@@ -97,25 +105,20 @@ def CreateLinearPlot(clusters1, clusters2, titles, t1name, t2name, yaxislabel=No
             
             
             for i,(x,y) in enumerate(zip(range(0,len(c1)), sal1)):
-                #label = "{:.2f}".format(y)
-                col.annotate(', '.join(words1[i]), # this is the text
-                             (x,y), # this is the point to label
-                             textcoords="offset points", # how to position the text
-                             xytext=(0,20), # distance from text to points (x,y)
-                             ha='left', # horizontal alignment can be left, right or center
+                col.annotate(', '.join(words1[i]),          # this is the text
+                             (x,y),                         # this is the point to label
+                             textcoords="offset points",    # how to position the text
+                             xytext=(0,20),                 # distance from text to points (x,y)
+                             ha='left',                     # horizontal alignment can be left, right or center
                              fontsize=12) 
 
             for i,(x,y) in enumerate(zip(range(0,len(c2)), sal2*-1)):
-                #label = "{:.2f}".format(y)
-                col.annotate(', '.join(words2[i]), # this is the text
-                             (x,y), # this is the point to label
-                             textcoords="offset points", # how to position the text
-                             xytext=(0,-20), # distance from text to points (x,y)
-                             ha='left',  # horizontal alignment can be left, right or center
-                             fontsize=12)
-
-
-            
+                col.annotate(', '.join(words2[i]),          # this is the text
+                             (x,y),                         # this is the point to label
+                             textcoords="offset points",    # how to position the text
+                             xytext=(0,-20),                 # distance from text to points (x,y)
+                             ha='left',                     # horizontal alignment can be left, right or center
+                             fontsize=12) 
             index+=1
     
       
@@ -125,62 +128,21 @@ def CreateLinearPlot(clusters1, clusters2, titles, t1name, t2name, yaxislabel=No
     
     plt.show()
     
-def _getMaxFreq(clusters):
-    allc = []
-    for cl in clusters:
-        allc.append( [c[1]['freq'] for c in cl] )
-    allc = list(itertools.chain.from_iterable(allc))
-    return max(allc)
-
-engine = inflect.engine()
-ps = PorterStemmer() 
-def _selectWords(words, num=1, dontinclude = None):
-    allwused = set(['slutty', "he'sa", "guy'sa"])
-    addspacing = ["nazareth", "guilt", "beaten", "cute", "patriarch", "hodgepodge", "threats","baptist","cuck", "trump", "leader"]
-    tor = []
-    #first remove repetitions and plurals
-    for ws in words:
-        allwselected = []
-        for w in ws[0]:
-            if(dontinclude is None):
-                plural = engine.plural(w)
-                stem = ps.stem(w)
-                if(w not in allwused and plural not in allwused and stem not in allwused):
-                    if(w in addspacing):
-                        w = w+' \n'
-                    allwselected.append(w)
-                    print('appending ', w, ' plural :', plural, ' stem:', stem)
-
-                allwused.add(w)
-                allwused.add(plural)
-                allwused.add(stem)
-                if(len(allwselected) == num):
-                    break
-            else:
-                if w in dontinclude:
-                    pass
-                else:
-                    if(w=="nazareth" or w == "guilt"):
-                        #print('FOUND')
-                        w = w+' \n'
-                    allwselected.append(w)
-        #print(allwselected)
-        if(len(allwselected) == 0):
-            print('ITS ZERO')
-            allwselected.append(ws[0][0])
-        tor.append(allwselected[:min(1, len(allwselected))])
-    #print(tor)
-    return tor
-    
+   
 '''
 PIE
 '''
-def GeneratePie(clusterplususas1, clusterplususas2, percentthreshold = 0, labelcolors = None, ignoreUnmatched = False, savefilename = None):
+def GeneratePie(clusterplususas1, clusterplususas2, percentthreshold = 0, labelcolors = None, ignoreUnmatched = True, savefilename = None):
     '''
+    Creates a pie chart showing the distribution of semantic labels among the set of clusters biased towards ts1 and ts2. `Unmatched' is not considered
+    a semantic category, therefore `ignoreUnmatched` is set to True by default.
+
     clusterplususas1 : counting of usas labels as provided by the DADDBIas object 
     clusterplususas2 : counting of usas labels as provided by the DADDBIas object
-    percentthreshold <int> : minimum percentage of frequency for a label to be considered
-    labelcolors <dictionary<string:string>> : dictionary mapping label name with color
+    percentthreshold <float> : minimum percentage of frequency for a label to be considered in the pie. 
+    labelcolors <dictionary<string:string>> : dictionary mapping cluster label name with color
+    ignoreUnmatched <bool> : True/False indicating if we want to show unmatched clusters in the pie.
+    savefilename <str> : Path to save output pie image
     '''
     #first process the USAS labels and create rankings.
     clusterplususas1 =_rankUSASLabels_modif(clusterplususas1)
@@ -193,16 +155,13 @@ def GeneratePie(clusterplususas1, clusterplususas2, percentthreshold = 0, labelc
         totalC2 = sum( [x[1] for x in clusterplususas2] )
         pc2 = math.ceil(percentthreshold/100 * totalC2)
         clusterplususas2 = [ (x,y) for [x,y] in clusterplususas2 if y >= pc2 and y > 1]
-        print('threshold t1:', pc1, ' th2:', pc2)
 
     if(ignoreUnmatched is not None and ignoreUnmatched == True):
         ind = [x[0] for x in clusterplususas1].index('Unmatched')
         if(ind>=0):
-            print('Removing unmatched t1 ', clusterplususas1[ind])
             del clusterplususas1[ind]
         ind = [x[0] for x in clusterplususas2].index('Unmatched')
         if(ind>=0):
-            print('Removing unmatched t2 ', clusterplususas2[ind])
             del clusterplususas2[ind]
         
     f1count = [ x[1] for x in clusterplususas1]
@@ -227,51 +186,10 @@ def GeneratePie(clusterplususas1, clusterplususas2, percentthreshold = 0, labelc
         col.pie(count, labels=labels,autopct='%1.1f%%',shadow=False, startangle=90, colors = colors)
         col.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
         index +=1
-        #col.title(title)
     if(savefilename is not None):
         print('figure was saved as ', savefilename)
         plt.savefig(savefilename, dpi = 200)
     plt.show()
-
-
-    
-def _rankUSASLabels_modif(cluster_dict):
-        '''
-        This method does exactly the same as DADDBias _rankUSASLabels method but ignores these unmatched labels that belong
-        to clusters with other USAS labels with the same frequency. 
-        If a cluster is tagged with USAS = ['unmatched', 'power'], then we consider label (Power) as the cluster label.
-        '''
-        #Unmatched is never considered as a label if there are other labels as frequent as unmatched in the cluster
-        labeldict = {}
-        labels = [v['USAS_label'].split(",") for v in cluster_dict.values()]
-        #ignore those Unmatched labels that are as frequent as otehr labels, idnicating that the cluster is not unmatched since
-        #its labelled
-        for ls in labels:
-            if(len(ls)>1):
-                #contains more than one label
-                if('Unmatched' in ls):
-                    del ls[ls.index('Unmatched')]
-        #flatten the list of labels
-        labels = list(itertools.chain.from_iterable(labels))
-        labels = [l.strip() for l in labels]
-        for l in labels:
-            if(l in labeldict):
-                labeldict[l] += 1
-            else:
-                labeldict[l] = 1
-        tor = [(k,v) for k,v in labeldict.items()]
-        tor.sort(key=lambda x: x[1], reverse=-1)
-        return tor
-
-def _rep(name):
-    #shorten names to display
-    toreplace = ['Similar/different', 'and the supernatural', 'and physical properties', 'and writing', 'and personal belongings', 'and Friendliness', 'and related activities', '-', ':-', '(pretty etc.)', ':']
-    for r in toreplace:
-        if(r in name):
-            name = name.replace(r, "")
-    return name.lower().capitalize()
-    
-
 
     
 '''
@@ -279,11 +197,15 @@ HEATMAP
 '''
 def GenerateHeatmap(usasLabelsRanking1L, usasLabelsRanking2L, names1L, names2L, size = None, percentthreshold = 0,savefilename = None):
     '''
+    Creates a heatmap showing the intersection between all semantic labels of the different models above a relative frequency threshold.
+
     usasLabelsRanking1L : List of usasLabelsRankings from DADDBias for targetset1
     usasLabelsRanking2L : List of usasLabelsRankings from DADDBias for targetset2
     names1L list<str> : List of labels for rankings1
     names2L list<str> : List of labels for rankings2
-    percentthreshold <int> : ignore labels with lower frequency than the percent threshold wrt the total aggregated label freq
+    size : size of the plot
+    percentthreshold <float> : ignore labels with lower frequency than the percent threshold wrt the total aggregated label freq
+    savefilename <str> : Path to save output pie image
     '''
     usasl1 = []
     usasl2 = []
@@ -295,8 +217,6 @@ def GenerateHeatmap(usasLabelsRanking1L, usasLabelsRanking2L, names1L, names2L, 
         totalC2 = sum( [x[1] for x in usasLabelsRanking2L[index] ] )
         pc2 = math.ceil(percentthreshold/100 * totalC2)
         usasl2.append( [x  for [x,y] in usasLabelsRanking2L[index] if y > pc2 and y > 1])
-        print('set of labels above thr ({},{}) : ({}, {})'.format(pc1, pc2, len(usasl1[index]), len(usasl2[index])))
-    
     usas = usasl1+usasl2
     labels =names1L+names2L
     iM = _getInteresectinMatrix(usas)
@@ -307,7 +227,6 @@ def GenerateHeatmap(usasLabelsRanking1L, usasLabelsRanking2L, names1L, names2L, 
     fig = plt.figure(figsize=(size))
     ax = fig.add_subplot(111)
     cax = ax.matshow(iM, interpolation='nearest')
-    #ax.set_xticklabels([])
     ax.set_yticklabels([''] + labels)
     ax.set_xticklabels([''] + labels)
     for tic in ax.xaxis.get_major_ticks():
@@ -329,7 +248,10 @@ def GenerateHeatmap(usasLabelsRanking1L, usasLabelsRanking2L, names1L, names2L, 
         plt.savefig(savefilename, dpi = 200)
         
     plt.show()
-    
+
+'''
+Aux functions    
+'''
 def _getInteresectinMatrix(listLabels):
     '''
     listLabels list<list<str>> : list of lists of usas labels. This function
@@ -348,4 +270,83 @@ def _getInteresectinMatrix(listLabels):
 def _intersec(list1, list2):
     intersection = len(list(set(list1).intersection(list2)))
     return float(intersection) / min(len(list1),len(list2))
+    
+def _getMaxFreq(clusters):
+    allc = []
+    for cl in clusters:
+        allc.append( [c[1]['freq'] for c in cl] )
+    allc = list(itertools.chain.from_iterable(allc))
+    return max(allc)
+
+engine = inflect.engine()
+ps = PorterStemmer() 
+def _selectWords(words, num=1):
+    '''
+    Filters out clusters with repeated stems to show a larger variety of biases in the limited space of the figure.
+    Also cleans parsing and stemming mistakes, and adds spacing to specific words to improve visualisation.
+    words <list<str>> : words to process
+    num <int> : number of words to process (since we do not use all words as a cluster label, we don't process them all)
+
+    >>returns
+    The list of words already processed and with added spacing if needed
+    '''
+    allwused = set(["slutty", "he'sa", "guy'sa"])
+    addspacing = ["nazareth", "guilt", "beaten", "cute", "patriarch", "hodgepodge", "threats","baptist","cuck", "trump", "leader"]
+    tor = []
+    #first remove repetitions and plurals
+    for ws in words:
+        allwselected = []
+        for w in ws[0]:
+            plural = engine.plural(w)
+            stem = ps.stem(w)
+            if(w not in allwused and plural not in allwused and stem not in allwused):
+                if(w in addspacing):
+                    w = w+' \n'
+                allwselected.append(w)
+            allwused.add(w)
+            allwused.add(plural)
+            allwused.add(stem)
+            if(len(allwselected) == num):
+                break
+        if(len(allwselected) == 0):
+            allwselected.append(ws[0][0])
+        tor.append(allwselected[:min(1, len(allwselected))])
+    return tor
+
+def _rankUSASLabels_modif(cluster_dict):
+        '''
+        This method does exactly the same as DADDBias _rankUSASLabels method but ignores these unmatched labels that belong
+        to clusters with other USAS labels with the same frequency. For instance, if a cluster is tagged with USAS = ['unmatched', 'power'] 
+        (meaning that both labels have the same freuency in the cluster), then we consider label (Power) as the cluster label.
+        '''
+        #Unmatched is never considered as a label if there are other labels as frequent as unmatched labels in the cluster
+        labeldict = {}
+        labels = [v['USAS_label'].split(",") for v in cluster_dict.values()]
+        #ignore those Unmatched labels that are as frequent as otehr labels, idnicating that the cluster is actually labelled
+        for ls in labels:
+            if(len(ls)>1):
+                #contains more than one label
+                if('Unmatched' in ls):
+                    del ls[ls.index('Unmatched')]
+        #flatten the list of labels
+        labels = list(itertools.chain.from_iterable(labels))
+        labels = [l.strip() for l in labels]
+        for l in labels:
+            if(l in labeldict):
+                labeldict[l] += 1
+            else:
+                labeldict[l] = 1
+        tor = [(k,v) for k,v in labeldict.items()]
+        tor.sort(key=lambda x: x[1], reverse=-1)
+        return tor
+
+def _rep(name):
+    '''
+    Shorten names to display in the figures.
+    '''
+    toreplace = ['Similar/different', 'and the supernatural', 'and physical properties', 'and writing', 'and personal belongings', 'and Friendliness', 'and related activities', '-', ':-', '(pretty etc.)', ':']
+    for r in toreplace:
+        if(r in name):
+            name = name.replace(r, "")
+    return name.lower().capitalize()
     

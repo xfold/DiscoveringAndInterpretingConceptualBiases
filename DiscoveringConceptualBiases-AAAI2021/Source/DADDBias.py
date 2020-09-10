@@ -1,7 +1,7 @@
 '''
 ******************************************************************************************************************
 NOTE: Although the code has been cleaned and commented, it is far from a final version. Many structures and procedures could be improved. 
-We are still working on it, but hopefully this serves as an alpha version of the approach presented in the paper.
+We are still working on it, but hopefully this serves as a beta version to demo the approach presented in the paper.
 ******************************************************************************************************************
 '''
 
