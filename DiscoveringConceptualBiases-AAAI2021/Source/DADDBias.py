@@ -290,7 +290,7 @@ class DADDBias:
                         maxscore[0] = score
                         maxscore[1] = preds
                         maxscore[2] = centers
-                print('Exploring ',k, ' clusters... last silhouette score: ', score) 
+                print('Exploring ',k, ' clusters...') 
 
             #Map the words to each cluster considering the paritition with max silhouette score
             clusters = []
