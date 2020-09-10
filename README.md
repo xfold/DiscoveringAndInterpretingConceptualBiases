@@ -11,6 +11,7 @@ This repository contains the next files and folders:
   <li><b>Models/</b>: Folder containing the toy model for dataset <i>toy_1000_trp.csv</i>, together with the pretrained models used in the paper.</li>
   <li><b>Source/</b>: Folder containing the source code used in this submission.  </li>
   <li><b>Source/Misc</b>: Folder containing helper functions related with the submission.</li>
+  <li><b>PaperExperiments/</b>: Folder containing a jupyter notebook with a step by step explanation showing how to reproduce all figures presented in the paper.
   <li><b>Run.example.train.py</b>: Training example which used the toy dataset provided in this repository to train an embeddings model. </li>
   <li><b>Run.example.bias.py</b>: Apply our method to discover the biases of the toy example model trained with `Run.example.train.py`. </li>
   <li><b>Run.example.full.ipynb</b>: Python notebook walkthrough exemplifying the whole bias discovery process. This includes: (i) training an embedding model, (ii) discovering biases and clustering, (iii) semantic label tagging, and (iv) exploration of the biases of the model using the toy dataset provided in this project.</li>
@@ -28,6 +29,19 @@ Now we are ready to run a toy experiment with the provided Dataset and see if ev
 python3 Run.example.train.py
 python3 Run.example.bias.py
 ```
-This command will train a model for a small toy dataset collected from TheRedPill included in the project, estimate its gender biases towards women and men, cluster them in concepts, assign a semantic label to each cluster and finally save all calculations and discovered conceptual biases in a json file to facilitate the analysis and creation of figrues. <i>Note that this is a toy dataset created with just a very small part of the original dataset, used to only test the approach, and trained using a reduced set of parameters to speed up the testing process. The results obtained with this toy dataset might not correspond or be simliar to the ones presented in the paper. The full datasets used in this work are presented next. </i>
+This command will train a model for a small toy dataset collected from TheRedPill included in the project, estimate its gender biases towards women and men attribute sets, cluster them in concepts, assign a semantic label to each cluster and finally save all calculations and discovered conceptual biases in a json file to facilitate the analysis and the creation of figures. <i>Note that this is a toy dataset created with just a very small part of the original dataset, used to only test the approach. The training, bias parameters, and results obtained with this toy dataset might not be simliar to the ones presented in the paper. To reproduce the paper results, please use the jupyter notebook found in `PaperExperiments/` folder. Also, the original Reddit datasets used in this work are introduced next. </i>
 
 Another possibility is to run the python notebook file `Run.example.full.ipynb` included in the project in which we present an step by step explanation of the process and results.
+
+# Experiments and Reproducibility
+
+# Datasets and Models Training
+The original Reddit datasets used in the paper can be downloaded [here](https://osf.io/qmf62/?view_only=6be755746530433da0a5d985ffa69579). Note they are large!
+Once the datasets are downloaded, you can train the same models used in the paper by following the examples presented in the python notebook `Run.example.full.ipynb` - make sure you use the same parameters reported in the paper.   
+
+# Bias models
+Since training of the embedding models and the discovering of biases is a slow process, we are also providing the results of executing our methodology on the original datasets in a json format. The Bias models can be loaded using the `DADDBias.py` class, and contain all information related to the bias discovery, clustering and semantic tagging of the biases of a community. The Bias models can also be used to generate the Figures presented in the paper, as shown in the jupyter notebook included in the folder `PaperExperiments/`.
+
+
+
+
