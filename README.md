@@ -18,3 +18,16 @@ This repository contains the next files and folders:
   <li><b>README.md</b>: This file.</li>    
 </ul>
 
+# Setup
+First, you need to install all dependencies and libraries:
+```python
+pip3 install -r requirements.txt
+```
+Now we are ready to run a toy experiment with the provided Dataset and see if everything is working (Python 3):
+```python
+python3 Run.example.train.py
+python3 Run.example.bias.py
+```
+This command will train a model for a small toy dataset collected from TheRedPill included in the project, estimate its gender biases towards women and men, cluster them in concepts, assign a semantic label to each cluster and finally save all calculations and discovered conceptual biases in a json file to facilitate the analysis and creation of figrues. <b>Note that this is a toy dataset created with just a very small part of the original dataset, used to only test the approach, and trained using a reduced set of parameters to speed up the testing process. The results obtained with this toy dataset might not correspond or be simliar to the ones presented in the paper. The full datasets used in this work are presented next. </b>
+
+Another possibility is to run the python notebook file (`Run.example.full.ipynb`) included in the project in which we present an step by step explanation of the process and results.
