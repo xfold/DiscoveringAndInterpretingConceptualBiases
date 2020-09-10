@@ -8,7 +8,7 @@ Language carries implicit human biases, functioning both as areflection and a pe
 This repository contains the next files and folders:
 <ul>
   <li><b>Datasets/</b>: Folder containing the toy dataset <i>toy_1000_trp.csv</i>. Other datasets should be downloaded (see below).</li>
-  <li><b>Models/</b>: Folder containing the toy model for dataset <i>toy_1000_trp.csv</i>, together with DADDobject pretrained models (see below).</li>
+  <li><b>Models/</b>: Folder containing the toy model for dataset <i>toy_1000_trp.csv</i>, together with the pretrained models used in the paper.</li>
   <li><b>Source/</b>: Folder containing the source code used in this submission.  </li>
   <li><b>Source/Misc</b>: Folder containing helper functions related with the submission.</li>
   <li><b>Run.example.train.py</b>: Training example which used the toy dataset provided in this repository to train an embeddings model. </li>
