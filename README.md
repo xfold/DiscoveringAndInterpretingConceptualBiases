@@ -35,12 +35,56 @@ Another possibility is to run the python notebook file `Run.example.full.ipynb` 
 
 # Experiments and Reproducibility
 
-# Datasets and Models Training
+## Datasets and Model Training
 The original Reddit datasets used in the paper can be downloaded [here](https://osf.io/qmf62/?view_only=6be755746530433da0a5d985ffa69579). Note they are large!
 Once the datasets are downloaded, you can train the same models used in the paper by following the examples presented in the python notebook `Run.example.full.ipynb` - make sure you use the same parameters reported in the paper.   
 
-# Bias models
+## Bias models
 Since training of the embedding models and the discovering of biases is a slow process, we are also providing the results of executing our methodology on the original datasets in a json format. The Bias models can be loaded using the `DADDBias.py` class, and contain all information related to the bias discovery, clustering and semantic tagging of the biases of a community. The Bias models can also be used to generate the Figures presented in the paper, as shown in the jupyter notebook included in the folder `PaperExperiments/`.
+
+Bias models can be found in folder `Models/` and can be loaded using `.Load()` function. For instance, to load the Bias model for r/TheRedPill we used in the paper, we would do:
+```python
+import DADDBias
+
+savedfile = 'Models//toy_w4_f10_e100_d200_bias_bias.True_cluster.True_USAS.True.json'
+test = DADDBias.DADDBias()
+test.Load(savedfile)
+```
+
+Once a model is loaded, we can access all information regarding that execution (see `Source/DADDBias.py` object). Some of the most relevant are:
+```python
+  #biased and most salient words
+  b1_dict             #dictionary of biased words towards target set 1
+  b2_dict             #dictionary of biased words towards target set 2
+  #conceptual biases
+  clusters1_dict      #cluster dicitonary for ts1
+  clusters2_dict      #cluster dicitonary for ts2
+  #semantic categorisation of conceptual biases 
+  usasLabelsRanking1  #agrgegation of USAS labels at a partition lebel for ts1
+  usasLabelsRanking2  #agrgegation of USAS labels at a partition lebel for ts1
+```
+
+Therefore, once a model is loaded, the variable `b1_dict` will contain the set of most salient words selected biased towards attribute concept 1. For example, with next code we are listing all selected salient words biased towards attribute concept 1 (`women` in this model):
+```python
+print('Total select words biased towards women:', len(test.b1_dict))
+for k,v in list(test.b1_dict.items()):
+    print(k, '\t (salience ', test.b1_dict[k]['sal'], ')')
+```
+Or we can also access the set of conceptual biases by querying `clusters2_dict`. For example, with next code we are listing all clusters biased towards attribute concept 2 (`men` in this model):
+```python
+print('Total conceptual clusters biased towards men: ',len(test.clusters2))
+for k in test.clusters2:
+    print(k)
+```
+
+## Reproducibility
+
+
+
+# Examples
+
+
+
 
 
 
