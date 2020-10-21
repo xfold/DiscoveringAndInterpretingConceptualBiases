@@ -1,5 +1,7 @@
 ﻿# Discovering and Interpreting Conceptual Biases in Online Communities Source Code
 This repository contains the source code of the original paper `Discovering and Interpreting Conceptual Biases in Online Communities`.
+This work is part of the project [Discovering and Attesting Digital Discrimination (DADD)](http://dadd-project.org/). 
+Related to this work, we created the [Language Bias Visualiser](https://xfold.github.io/WE-GenderBiasVisualisationWeb/), an interactive web-based platform that helps exploring gender biases found in various Reddit datasets.
 
 <b>Abstract</b>
 Language carries implicit human biases, functioning both as areflection and a perpetuation of stereotypes that people carry with them. Recently, ML-based NLP methods such as word embeddings have been shown to learn such language biases strikingly accurately. This capability of word embeddings has been successfully exploited as a tool to quantify and study human biases. However, previous studies only consider a predefined set of conceptual biases to attest (e.g., whether gender is more or less associated with particular jobs), or just discover biased words without helping to understand their meaning at the conceptual level. As such, these approaches are either unable to find conceptual biases that have not been defined inadvance, or the biases they find are difficult to interpret and study. This makes existing approaches unsuitable to discover and interpret  biases  in  online  communities,  as  online  communities may have different biases from mainstream culture which need to be discovered and properly interpreted. This paper proposes a general, data-driven approach to automatically discover and help interpret conceptual biases encoded in word embeddings. We apply this approach to study the conceptual biases present in the language used in online communities and experimentally show the validity and stability of our method
@@ -80,4 +82,8 @@ for k in test.clusters2:
 ## Reproducibility
 By providing the original Datasets, the source code to train your models and the resulting Bias models of the executions used in the paper, we want to make sure the results are easily reproducible. we are also including a jupyter notebook in folder `PaperExperiments/` which shows how we generated all paper figures, and that is ready to run by anyone with a jupyter notebook installed on their computer. 
 
+# Contact
+You can find us on our website on [Discovering and Attesting Digital Discrimination](http://dadd-project.org/), or at [@DADD_project](https://twitter.com/DADD_project).
+<br>
+<i>Updated Oct 2020</i>
 
