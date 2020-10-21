@@ -1,4 +1,4 @@
-﻿# Discovering and Interpreting Conceptual Biases in Online Communities Source Code - AAAI2021 - Blind version
+﻿# Discovering and Interpreting Conceptual Biases in Online Communities Source Code
 This repository contains the source code of the original paper `Discovering and Interpreting Conceptual Biases in Online Communities`.
 
 <b>Abstract</b>
