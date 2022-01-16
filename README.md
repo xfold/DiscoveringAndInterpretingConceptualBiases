@@ -1,4 +1,4 @@
-﻿# Discovering and Interpreting Conceptual Biases in Online Communities Source Code
+﻿# Discovering and Interpreting Biased Concepts in Online Communities Source Code
 This repository contains the source code of the original paper `Discovering and Interpreting Conceptual Biases in Online Communities`.
 This work is part of the project [Discovering and Attesting Digital Discrimination (DADD)](https://dadd-project.github.io/). 
 Related to this work, we created the [Language Bias Visualiser](https://xfold.github.io/WE-GenderBiasVisualisationWeb/), an interactive web-based platform that helps exploring gender biases found in various Reddit datasets.
