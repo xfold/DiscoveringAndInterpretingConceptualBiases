@@ -9,19 +9,19 @@ Language carries implicit human biases, functioning both as a reflection and a p
 To cite this work, please use:
 ```
 @ARTICLE {9667280,
-author = {X. Ferrer Aran and T. Van Nuenen and N. Criado and J. Such},
-journal = {IEEE Transactions on Knowledge & Data Engineering},
-title = {Discovering and Interpreting Biased Concepts in Online Communities},
-year = {5555},
-volume = {},
-number = {01},
-issn = {1558-2191},
-pages = {1-1},
-keywords = {},
-doi = {10.1109/TKDE.2021.3139680},
-publisher = {IEEE Computer Society},
-address = {Los Alamitos, CA, USA},
-month = {dec}
+    author = {X. Ferrer Aran and T. Van Nuenen and N. Criado and J. Such},
+    journal = {IEEE Transactions on Knowledge & Data Engineering},
+    title = {Discovering and Interpreting Biased Concepts in Online Communities},
+    year = {5555},
+    volume = {},
+    number = {01},
+    issn = {1558-2191},
+    pages = {1-1},
+    keywords = {},
+    doi = {10.1109/TKDE.2021.3139680},
+    publisher = {IEEE Computer Society},
+    address = {Los Alamitos, CA, USA},
+    month = {dec}
 }
 ```
 
