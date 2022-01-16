@@ -12,7 +12,7 @@ To cite this work, please use:
     author = {X. Ferrer Aran and T. Van Nuenen and N. Criado and J. Such},
     journal = {IEEE Transactions on Knowledge & Data Engineering},
     title = {Discovering and Interpreting Biased Concepts in Online Communities},
-    year = {5555},
+    year = {2022},
     volume = {},
     number = {01},
     issn = {1558-2191},
