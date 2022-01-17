@@ -66,7 +66,7 @@ def TrainModel(csv_document, csv_comment_column='body', outputname='outputModel'
         '''
         starttime = time.time()
         print('->->Starting training model {} with dimensions:{}, minf:{}, epochs:{}'.format(outputfile,ndim, minfreq, epochss))
-        model = gensim.models.Word2Vec (documents, size=ndim, window=window, min_count=minfreq, workers=5)
+        model = gensim.models.Word2Vec (documents, size=ndim, window=window, min_count=minfreq, workers=5, sg=1)
         model.train(documents,total_examples=len(documents),epochs=epochss)
         model.save(outputfile)
         print('->-> Model saved in {}'.format(outputfile))
